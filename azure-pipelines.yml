@@ -1,0 +1,30 @@
+trigger: none
+pool:Luddan-Pool1
+displayName:Step1 terraform install
+steps:
+- task: TerraformInstaller@1
+  inputs:
+    terraformVersion: 'latest'
+- task: TerraformTask@5
+  inputs:
+    provider: 'azurerm'
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/'
+    backendServiceArm: 'SCLuddan1'
+    backendAzureRmStorageAccountName: 'stgluddan1'
+    backendAzureRmContainerName: '$logs'
+    backendAzureRmKey: 'terraform.tfstate'
+
+- task: TerraformTask@5
+  inputs:
+    provider: 'azurerm'
+    command: 'plan'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/'
+    environmentServiceNameAzureRM: 'SCLuddan1'
+- task: TerraformTask@5
+  inputs:
+    provider: 'azurerm'
+    command: 'apply'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/'
+    commandOptions: '-auto-approve'
+    environmentServiceNameAzureRM: 'SCLuddan1'
